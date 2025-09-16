@@ -26,7 +26,10 @@ const Index = () => {
               Get Started
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <Button variant="outline" size="lg" className="border-white/40 text-white hover:bg-white/20 hover:scale-105 transition-all duration-300">
+            <Button
+              size="lg"
+              className="bg-white text-foreground hover:bg-white/90 border border-transparent hover:scale-105 transition-all duration-300"
+            >
               Learn More
             </Button>
           </div>

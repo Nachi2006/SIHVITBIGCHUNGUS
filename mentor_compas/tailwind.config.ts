@@ -174,7 +174,7 @@ export default {
         "scale-in": "scale-in 0.4s ease-out",
         "bounce-in": "bounce-in 0.8s ease-out",
         "slide-up": "slide-up 0.6s ease-out",
-        "rainbow": "rainbow 3s ease-in-out infinite",
+        "rainbow": "rainbow 8s ease-in-out infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
       },
     },
