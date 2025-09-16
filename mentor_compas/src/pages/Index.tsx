@@ -28,7 +28,7 @@ const ContactPopup = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
             We're here to help! Reach out to us at:
           </p>
           <a 
-            href={`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`}
+            href={https://mail.google.com/mail/?view=cm&fs=1&to=${email}}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-lg hover:shadow-cyan-500/30"

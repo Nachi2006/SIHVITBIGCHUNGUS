@@ -17,7 +17,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         nav: "text-foreground hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition-all duration-300 hover:shadow-sm hover:scale-105",
         hero: "bg-gradient-primary text-white hover:opacity-90 shadow-md hover:shadow-vibrant transform hover:scale-[1.05] transition-all duration-300 hover:animate-pulse-glow",
-        rainbow: "bg-gradient-rainbow bg-[length:400%_400%] text-white animate-rainbow hover:scale-105 shadow-rainbow transition-all duration-300",
+        rainbow: "bg-primary text-white hover:bg-primary/90 hover:scale-105 shadow-md transition-all duration-300",
         sunset: "bg-gradient-sunset text-white hover:shadow-vibrant hover:scale-105 transition-all duration-300",
         ocean: "bg-gradient-ocean text-white hover:shadow-glow hover:scale-105 transition-all duration-300",
       },
