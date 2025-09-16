@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status, requests
+from rest_framework import status, request
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import UserSerializer
@@ -16,6 +16,7 @@ from urllib.parse import urljoin
 from django.urls import reverse
 from django.shortcuts import render
 from django.views import View
+import requests
 
 #jwt authorization
 class Home(APIView):
@@ -37,6 +38,8 @@ class GoogleLogin(SocialLoginView):
     callback_url = settings.GOOGLE_OAUTH_CALLBACK_URL
     client_class = OAuth2Client
 class GoogleLoginCallback(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
     def get(self, request, *args, **kwargs):
 
         code = request.GET.get("code")
@@ -51,7 +54,7 @@ class LoginPage(View):
     def get(self, request, *args, **kwargs):
         return render(
             request,
-            "pages/login.html",
+            "login.html",
             {
                 "google_callback_uri": settings.GOOGLE_OAUTH_CALLBACK_URL,
                 "google_client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
