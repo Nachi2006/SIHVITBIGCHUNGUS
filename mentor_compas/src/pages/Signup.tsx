@@ -20,7 +20,7 @@ const Signup = () => {
               <GraduationCap className="w-6 h-6 text-white" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold">Join EduCareer</CardTitle>
+              <CardTitle className="text-2xl font-bold">Join Career Compass <i className="fa fa-compass" aria-hidden="true"></i></CardTitle>
               <CardDescription className="text-muted-foreground">
                 Create your account to start your learning journey
               </CardDescription>
@@ -29,14 +29,8 @@ const Signup = () => {
           <CardContent className="space-y-6">
             {/* Social Login Options */}
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <Button
-                  variant="outline"
-                  className="h-11 border-2 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300 hover:scale-105"
-                >
-                  <Github className="w-5 h-5 mr-2" />
-                  GitHub
-                </Button>
+              <div className="grid grid-cols-1 gap-3">
+                
                 <Button
                   variant="outline"
                   className="h-11 border-2 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300 hover:scale-105"
@@ -68,7 +62,7 @@ const Signup = () => {
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
                     id="firstName"
-                    placeholder="John"
+                    placeholder="Riyan"
                     className="transition-all duration-300 focus:shadow-glow/20"
                   />
                 </div>
@@ -76,17 +70,26 @@ const Signup = () => {
                   <Label htmlFor="lastName">Last Name</Label>
                   <Input
                     id="lastName"
-                    placeholder="Doe"
+                    placeholder="Johnson"
                     className="transition-all duration-300 focus:shadow-glow/20"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="Email">Email</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
+                  id="Email"
+                  type="Email"
+                  placeholder="Enter your Email"
+                  className="transition-all duration-300 focus:shadow-glow/20"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="Username">Username</Label>
+                <Input
+                  id="Username"
+                  type="Username"
+                  placeholder="Enter Username"
                   className="transition-all duration-300 focus:shadow-glow/20"
                 />
               </div>
@@ -114,30 +117,7 @@ const Signup = () => {
                   </Button>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm your password"
-                    className="pr-10 transition-all duration-300 focus:shadow-glow/20"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </Button>
-                </div>
-              </div>
+              
             </div>
 
             <Button className="w-full" variant="sunset">

@@ -42,7 +42,7 @@ All colors MUST be HSL.
     --gradient-accent: linear-gradient(135deg, hsl(24 94% 50%), hsl(35 100% 50%));
     --gradient-hero: linear-gradient(135deg, hsl(221.2 83.2% 53.3%), hsl(198.6 93.2% 59.8%), hsl(172 66% 50%));
     --gradient-rainbow: linear-gradient(135deg, hsl(221.2 83.2% 53.3%), hsl(198.6 93.2% 59.8%), hsl(172 66% 50%), hsl(160 84% 39%), hsl(24 94% 50%));
-    --gradient-sunset: linear-gradient(135deg, hsl(24 94% 50%), hsl(35 100% 50%), hsl(45 100% 50%));
+    --gradient-sunset: linear-gradient(135deg, hsl(127, 54%, 49%), hsl(151, 41%, 49%), hsl(175, 65%, 42%));
     --gradient-ocean: linear-gradient(135deg, hsl(195 100% 50%), hsl(198.6 93.2% 59.8%), hsl(221.2 83.2% 53.3%));
     --gradient-forest: linear-gradient(135deg, hsl(160 84% 39%), hsl(142 76% 36%), hsl(120 100% 25%));
     
@@ -75,25 +75,25 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222.2 84% 2%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 222.2 84% 3%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 222.2 84% 2.5%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 217.2 32.6% 12.5%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 217.2 32.6% 14.5%;
+    --muted-foreground: 215 20.2% 70.1%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 217.2 32.6% 14.5%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;

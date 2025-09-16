@@ -145,7 +145,7 @@ const Index = () => {
             <span className="text-xl font-bold">EduCareer</span>
           </div>
           <p className="text-primary-foreground/80">
-            Empowering futures, one student at a time.
+            Contact Us : adithyanachiyappan@gmail.com
           </p>
         </div>
       </footer>
