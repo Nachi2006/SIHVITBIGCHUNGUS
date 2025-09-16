@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, MessageCircle, FileText, Briefcase, GraduationCap, Users, TrendingUp, Award, Mail, X } from "lucide-react";
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import Logo from "@/components/Logo";
 
 const ContactPopup = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
@@ -44,6 +45,11 @@ const ContactPopup = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
 
 const Index = () => {
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const navigate = useNavigate();
+  
+  const handleGetStarted = () => {
+    navigate('/signup');
+  };
   return (
     <div className="min-h-screen bg-background dark">
       <Header />
@@ -62,9 +68,19 @@ const Index = () => {
             Discover your potential with personalized career guidance, skill assessments, and opportunities that match your dreams.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-scale-in">
-            <Button size="lg" className="bg-cosmic text-white hover:bg-opacity-90 shadow-vibrant animate-pulse-glow mr-4">
-              Get Started
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            <Button 
+              size="lg" 
+              onClick={handleGetStarted}
+              className="group relative overflow-hidden bg-cosmic text-white hover:bg-opacity-90 shadow-vibrant mr-4
+                transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/30
+                hover:-translate-y-1 transform"
+            >
+              <span className="relative z-10 flex items-center">
+                Get Started
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </span>
+              <span className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-purple-400/20 opacity-0 
+                group-hover:opacity-100 transition-opacity duration-500"></span>
             </Button>
             <Button size="lg" className="bg-gradient-electric text-white font-bold px-8 py-4 rounded-lg border-2 border-white/60 hover:bg-white/20 hover:scale-105 transition-all duration-300 shadow-glow">
               Learn More
@@ -96,9 +112,11 @@ const Index = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
             <Card className="group hover:shadow-vibrant transition-all duration-500 hover:-translate-y-3 hover:scale-105 border-0 shadow-sm hover:rotate-1">
               <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 group-hover:animate-pulse-glow">
-                  <MessageCircle className="w-8 h-8 text-white" />
-                </div>
+                <Link to="/chat" className="block w-12 h-12 mx-auto mb-4 group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 group-hover:animate-pulse-glow">
+                  <div className="w-full h-full bg-gradient-primary rounded-lg flex items-center justify-center">
+                    <MessageCircle className="w-8 h-8 text-white" />
+                  </div>
+                </Link>
                 <h3 className="text-xl font-semibold mb-2 text-white group-hover:text-purple-400 transition-colors">AI Chat Support</h3>
                 <p className="text-gray-300 group-hover:text-white transition-colors">
                   Get instant answers and personalized guidance from our AI career counselor

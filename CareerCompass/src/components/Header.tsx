@@ -19,8 +19,8 @@ const Header = () => {
 
           {/* Main Navigation */}
           <nav className="hidden md:flex items-center space-x-2">
-            <Link to="#" className="group">
-              <Button variant="nav" className="group-hover:bg-white/5">
+            <Link to="/chat" className="group">
+              <Button variant="nav" className="group-hover:bg-white/5 hover:bg-gradient-to-r from-cyan-500/10 to-purple-500/10">
                 <MessageCircle className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
                 Chat
               </Button>
