@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: ["./pages//.{ts,tsx}", "./components//.{ts,tsx}", "./app//.{ts,tsx}", "./src//.{ts,tsx}"],
   prefix: "",
   theme: {
     container: {
@@ -67,6 +67,11 @@ export default {
         "gradient-sunset": "var(--gradient-sunset)",
         "gradient-ocean": "var(--gradient-ocean)",
         "gradient-forest": "var(--gradient-forest)",
+        "cosmic": "linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #06b6d4 100%)",
+        "nebula": "linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #ec4899 100%)",
+        "starfield": "linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e40af 100%)",
+        "aurora": "linear-gradient(135deg, #14b8a6 0%, #06b6d4 50%, #8b5cf6 100%)",
+        "galaxy": "linear-gradient(135deg, #581c87 0%, #7c3aed 50%, #a855f7 100%)",
       },
       boxShadow: {
         "glow": "var(--shadow-glow)",
@@ -174,8 +179,8 @@ export default {
         "scale-in": "scale-in 0.4s ease-out",
         "bounce-in": "bounce-in 0.8s ease-out",
         "slide-up": "slide-up 0.6s ease-out",
-        "rainbow": "rainbow 8s ease-in-out infinite",
-        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "rainbow": "rainbow 15s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 8s ease-in-out infinite",
       },
     },
   },
