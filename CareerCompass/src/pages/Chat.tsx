@@ -50,35 +50,85 @@ type Session = {
 };
 
 const Chat = () => {
-  // Session state
-  const [sessions, setSessions] = useState<Session[]>([
-    { 
-      id: '1', 
-      title: 'New Chat', 
-      isActive: true, 
-      lastMessage: new Date(),
-      messages: [{
-        id: '1',
-        content: 'Hello! I\'m your CareerCompass AI assistant. How can I help you today?',
-        isUser: false,
-        timestamp: new Date(),
-      }]
-    },
-  ]);
+  const { user } = useAuth();
   
-  const [messages, setMessages] = useState<Message[]>([
-    {
+  // Session state
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  // Load chat history on component mount
+  useEffect(() => {
+    const loadChatHistory = async () => {
+      try {
+        setIsLoadingHistory(true);
+        const history = await chatAPI.getChatHistory();
+        
+        if (history && history.length > 0) {
+          // Group messages by session (for now, we'll use a single session)
+          const historyMessages: Message[] = history.map((chat: any) => [
+            {
+              id: `${chat.id}-user`,
+              content: chat.message,
+              isUser: true,
+              timestamp: new Date(chat.created_at),
+            },
+            {
+              id: `${chat.id}-bot`,
+              content: chat.response,
+              isUser: false,
+              timestamp: new Date(chat.created_at),
+            }
+          ]).flat();
+
+          const session: Session = {
+            id: '1',
+            title: history[0]?.message?.slice(0, 30) + (history[0]?.message?.length > 30 ? '...' : '') || 'Chat History',
+            isActive: true,
+            lastMessage: new Date(history[0]?.created_at || new Date()),
+            messages: historyMessages
+          };
+
+          setSessions([session]);
+          setMessages(historyMessages);
+        } else {
+          // No history, create default session
+          const defaultSession = createDefaultSession();
+          setSessions([defaultSession]);
+          setMessages(defaultSession.messages);
+        }
+      } catch (error) {
+        console.error('Failed to load chat history:', error);
+        // Create default session on error
+        const defaultSession = createDefaultSession();
+        setSessions([defaultSession]);
+        setMessages(defaultSession.messages);
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
+
+    if (user) {
+      loadChatHistory();
+    }
+  }, [user]);
+
+  const createDefaultSession = (): Session => ({
+    id: '1',
+    title: 'New Chat',
+    isActive: true,
+    lastMessage: new Date(),
+    messages: [{
       id: '1',
       content: 'Hello! I\'m your CareerCompass AI assistant. How can I help you today?',
       isUser: false,
       timestamp: new Date(),
-    },
-  ]);
-  
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
+    }]
+  });
   
   // Create a new session with animation
   const createNewSession = () => {
@@ -250,6 +300,22 @@ const Chat = () => {
     'Job search tips',
     'Resume help'
   ];
+
+  // Show loading screen while loading history
+  if (isLoadingHistory) {
+    return (
+      <div className="flex h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 items-center justify-center">
+        <div className="text-center">
+          <div className="relative mb-6">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-cyan-500/20 to-purple-500/20 animate-pulse"></div>
+            <Loader2 className="absolute inset-0 m-auto h-10 w-10 animate-spin text-cyan-400" />
+          </div>
+          <p className="text-lg text-slate-300 font-medium mb-2">Loading your chat history...</p>
+          <p className="text-sm text-slate-500">Please wait a moment</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">

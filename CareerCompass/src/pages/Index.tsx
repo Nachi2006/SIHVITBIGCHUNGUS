@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, MessageCircle, FileText, Briefcase, GraduationCap, Users, TrendingUp, Award, Mail, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import Logo from "@/components/Logo";
 
 const ContactPopup = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
@@ -43,12 +44,137 @@ const ContactPopup = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
   );
 };
 
+const LearnMorePopup = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-8 max-w-2xl w-full shadow-2xl relative border border-cyan-500/20 max-h-[90vh] overflow-y-auto">
+        <button
+          onClick={onClose}
+          className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors z-10"
+        >
+          <X className="w-6 h-6" />
+        </button>
+        
+        <div className="text-center mb-8">
+          <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-r from-cyan-500/20 to-purple-500/20 mb-6 border border-cyan-500/30">
+            <GraduationCap className="h-10 w-10 text-cyan-400" />
+          </div>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
+            About CareerCompass
+          </h2>
+          <p className="text-lg text-slate-300 leading-relaxed">
+            Your ultimate destination for career guidance and professional growth
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 flex items-center justify-center border border-cyan-500/30">
+                  <MessageCircle className="w-6 h-6 text-cyan-400" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-2">AI-Powered Career Guidance</h3>
+                <p className="text-slate-300 leading-relaxed">
+                  Get personalized career advice from our intelligent chatbot. Whether you need help with career planning, 
+                  skill development, or interview preparation, our AI assistant is here to guide you 24/7.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-purple-500/30">
+                  <Briefcase className="w-6 h-6 text-purple-400" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-2">Comprehensive Job Search</h3>
+                <p className="text-slate-300 leading-relaxed">
+                  Access thousands of job opportunities from top companies worldwide. Our advanced search filters 
+                  help you find positions that match your skills, experience, and career goals.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-green-500/20 to-teal-500/20 flex items-center justify-center border border-green-500/30">
+                  <GraduationCap className="w-6 h-6 text-green-400" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-2">Educational Pathways</h3>
+                <p className="text-slate-300 leading-relaxed">
+                  Discover the best colleges and educational programs that align with your career aspirations. 
+                  Get insights into admission requirements, course curricula, and career prospects.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-orange-500/20 to-red-500/20 flex items-center justify-center border border-orange-500/30">
+                  <Users className="w-6 h-6 text-orange-400" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-2">Professional Community</h3>
+                <p className="text-slate-300 leading-relaxed">
+                  Connect with industry professionals, mentors, and peers. Share experiences, get advice, 
+                  and build valuable networks that can accelerate your career growth.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 text-center">
+          <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-xl p-6 border border-cyan-500/20">
+            <h3 className="text-xl font-semibold text-white mb-3">Ready to Start Your Journey?</h3>
+            <p className="text-slate-300 mb-4">
+              Join thousands of professionals who have transformed their careers with CareerCompass
+            </p>
+            <button
+              onClick={onClose}
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-medium rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/30 hover:scale-105"
+            >
+              Get Started Today
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Index = () => {
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isLearnMoreOpen, setIsLearnMoreOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   
   const handleGetStarted = () => {
     navigate('/signup');
+  };
+
+  const handleExploreFeatures = () => {
+    navigate('/chat');
+  };
+
+  const handleLearnMore = () => {
+    setIsLearnMoreOpen(true);
   };
   return (
     <div className="min-h-screen bg-background dark">
@@ -68,21 +194,42 @@ const Index = () => {
             Discover your potential with personalized career guidance, skill assessments, and opportunities that match your dreams.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-scale-in">
+            {!isAuthenticated ? (
+              <Button 
+                size="lg" 
+                onClick={handleGetStarted}
+                className="group relative overflow-hidden bg-cosmic text-white hover:bg-opacity-90 shadow-vibrant mr-4
+                  transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/30
+                  hover:-translate-y-1 transform"
+              >
+                <span className="relative z-10 flex items-center">
+                  Get Started
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <span className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-purple-400/20 opacity-0 
+                  group-hover:opacity-100 transition-opacity duration-500"></span>
+              </Button>
+            ) : (
+              <Button 
+                size="lg" 
+                onClick={handleExploreFeatures}
+                className="group relative overflow-hidden bg-cosmic text-white hover:bg-opacity-90 shadow-vibrant mr-4
+                  transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/30
+                  hover:-translate-y-1 transform"
+              >
+                <span className="relative z-10 flex items-center">
+                  Explore Features
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <span className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-purple-400/20 opacity-0 
+                  group-hover:opacity-100 transition-opacity duration-500"></span>
+              </Button>
+            )}
             <Button 
               size="lg" 
-              onClick={handleGetStarted}
-              className="group relative overflow-hidden bg-cosmic text-white hover:bg-opacity-90 shadow-vibrant mr-4
-                transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/30
-                hover:-translate-y-1 transform"
+              onClick={handleLearnMore}
+              className="bg-gradient-electric text-white font-bold px-8 py-4 rounded-lg border-2 border-white/60 hover:bg-white/20 hover:scale-105 transition-all duration-300 shadow-glow"
             >
-              <span className="relative z-10 flex items-center">
-                Get Started
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </span>
-              <span className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-purple-400/20 opacity-0 
-                group-hover:opacity-100 transition-opacity duration-500"></span>
-            </Button>
-            <Button size="lg" className="bg-gradient-electric text-white font-bold px-8 py-4 rounded-lg border-2 border-white/60 hover:bg-white/20 hover:scale-105 transition-all duration-300 shadow-glow">
               Learn More
             </Button>
           </div>
@@ -126,12 +273,14 @@ const Index = () => {
 
             <Card className="group hover:shadow-vibrant transition-all duration-500 hover:-translate-y-3 hover:scale-105 border-0 shadow-sm hover:-rotate-1">
               <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-gradient-secondary rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-500 group-hover:animate-pulse-glow">
-                  <FileText className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2 text-white group-hover:text-cyan-400 transition-colors">Skill Assessment</h3>
+                <Link to="/jobs" className="block w-12 h-12 mx-auto mb-4 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-500 group-hover:animate-pulse-glow">
+                  <div className="w-full h-full bg-gradient-secondary rounded-lg flex items-center justify-center">
+                    <Briefcase className="w-8 h-8 text-white" />
+                  </div>
+                </Link>
+                <h3 className="text-xl font-semibold mb-2 text-white group-hover:text-cyan-400 transition-colors">Job Search</h3>
                 <p className="text-gray-300 group-hover:text-white transition-colors">
-                  Comprehensive tests to identify your strengths and areas for improvement
+                  Find opportunities that match your skills and career aspirations
                 </p>
               </CardContent>
             </Card>
@@ -139,11 +288,11 @@ const Index = () => {
             <Card className="group hover:shadow-vibrant transition-all duration-500 hover:-translate-y-3 hover:scale-105 border-0 shadow-sm hover:rotate-1">
               <CardContent className="p-6 text-center">
                 <div className="w-12 h-12 bg-gradient-accent rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 group-hover:animate-pulse-glow">
-                  <Briefcase className="w-8 h-8 text-white" />
+                  <Users className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-white group-hover:text-pink-400 transition-colors">Job Opportunities</h3>
+                <h3 className="text-xl font-semibold mb-2 text-white group-hover:text-pink-400 transition-colors">Career Community</h3>
                 <p className="text-gray-300 group-hover:text-white transition-colors">
-                  Access thousands of curated job listings that match your profile
+                  Connect with professionals and get insights from industry experts
                 </p>
               </CardContent>
             </Card>
@@ -209,6 +358,7 @@ const Index = () => {
             </button>
           </div>
           <ContactPopup isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
+          <LearnMorePopup isOpen={isLearnMoreOpen} onClose={() => setIsLearnMoreOpen(false)} />
         </div>
       </footer>
     </div>

@@ -9,6 +9,8 @@ from .serializers import UserSerializer, ChatSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 import requests
+import google.generativeai as genai
+import os
 from .models import Chat
 from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.csrf import csrf_exempt
@@ -69,40 +71,80 @@ def home(request):
 
 def get_chatbot_response(message):
     """
-    Enhanced chatbot response function with career-focused responses.
-    Replace this with your actual ML model's prediction logic.
+    Enhanced chatbot response function using Google Gemini API for career-focused responses.
+    Falls back to rule-based responses if API fails.
     """
-    message = message.lower()
+    try:
+        # Configure Gemini API
+        api_key = os.getenv('GEMINI_API_KEY')
+        if not api_key:
+            print("No GEMINI_API_KEY found in environment variables")
+            return get_fallback_response(message)
+        
+        print(f"Using Gemini API key: {api_key[:10]}...")  # Show first 10 chars for debugging
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-pro')
+        
+        # Create a career-focused prompt
+        career_prompt = f"""
+        You are CareerCompass AI, a professional career guidance assistant. Your role is to provide helpful, accurate, and actionable career advice. 
+
+        Guidelines:
+        - Focus on career development, job search, skills, resume writing, interview preparation, and professional growth
+        - Provide practical, actionable advice
+        - Be encouraging and supportive
+        - Keep responses concise but informative (2-3 paragraphs max)
+        - If the question is not career-related, gently redirect to career topics
+        
+        User question: {message}
+        
+        Please provide a helpful career-focused response:
+        """
+        
+        response = model.generate_content(career_prompt)
+        
+        if response and response.text:
+            return response.text.strip()
+        else:
+            return get_fallback_response(message)
+            
+    except Exception as e:
+        print(f"Gemini API error: {e}")
+        return get_fallback_response(message)
+
+def get_fallback_response(message):
+    """
+    Fallback rule-based response system when Gemini API is unavailable.
+    """
+    message_lower = message.lower()
     
-    if any(word in message for word in ["hello", "hi", "hey", "greetings"]):
-        return "Hello! I'm your CareerCompass AI assistant. I'm here to help you with career guidance, job search tips, skill development, and resume advice. What would you like to know?"
+    # Career guidance responses
+    if any(word in message_lower for word in ['career', 'guidance', 'advice', 'path', 'direction']):
+        return "I'd be happy to help with career guidance! Career planning involves understanding your interests, skills, and values. Consider exploring different industries, networking with professionals, and gaining relevant experience through internships or projects. What specific area of career guidance interests you most?"
     
-    elif any(word in message for word in ["career", "guidance", "advice", "path"]):
-        return "I'd be happy to help with career guidance! To provide the best advice, could you tell me more about your current situation? Are you a student looking to choose a career path, someone considering a career change, or looking to advance in your current field?"
+    # Job search tips
+    elif any(word in message_lower for word in ['job', 'search', 'hunting', 'application', 'interview']):
+        return "Here are some effective job search strategies: 1) Tailor your resume for each position, 2) Use professional networks like LinkedIn, 3) Practice common interview questions, 4) Research companies thoroughly, 5) Follow up after applications. Would you like me to elaborate on any of these points?"
     
-    elif any(word in message for word in ["job", "search", "finding", "employment"]):
-        return "Great! Job searching can be challenging, but I'm here to help. Here are some key tips:\n\n1. Tailor your resume for each application\n2. Use job boards like LinkedIn, Indeed, and company websites\n3. Network with professionals in your field\n4. Prepare for interviews by researching companies\n5. Follow up after applications\n\nWhat specific aspect of job searching would you like to focus on?"
+    # Resume help
+    elif any(word in message_lower for word in ['resume', 'cv', 'curriculum vitae']):
+        return "A strong resume should highlight your achievements with quantifiable results. Key sections include: Contact info, Professional summary, Work experience, Education, and relevant Skills. Use action verbs and keep it concise (1-2 pages). Would you like specific tips for any section?"
     
-    elif any(word in message for word in ["resume", "cv", "curriculum"]):
-        return "I can definitely help with resume advice! A strong resume should:\n\n• Have a clear, professional format\n• Include relevant keywords from job descriptions\n• Highlight your achievements with specific metrics\n• Be tailored to each position\n• Include a compelling summary statement\n\nWould you like specific advice for any particular section of your resume?"
+    # Skill development
+    elif any(word in message_lower for word in ['skill', 'learn', 'development', 'training', 'course']):
+        return "Continuous skill development is crucial for career growth! Identify in-demand skills in your field, use online platforms like Coursera, Udemy, or LinkedIn Learning. Practice through projects, seek mentorship, and consider certifications. What skills are you looking to develop?"
     
-    elif any(word in message for word in ["skill", "skills", "development", "learning"]):
-        return "Skill development is crucial for career growth! Here's how to approach it:\n\n1. Identify in-demand skills in your field\n2. Take online courses (Coursera, Udemy, LinkedIn Learning)\n3. Practice through projects and volunteering\n4. Seek mentorship and feedback\n5. Stay updated with industry trends\n\nWhat specific skills are you looking to develop?"
+    # Interview preparation
+    elif any(word in message_lower for word in ['interview', 'preparation', 'questions']):
+        return "Interview preparation tips: 1) Research the company and role, 2) Practice STAR method for behavioral questions, 3) Prepare thoughtful questions to ask, 4) Dress appropriately, 5) Arrive early and be confident. Common questions include 'Tell me about yourself' and 'Why do you want this role?' Need help with specific interview scenarios?"
     
-    elif any(word in message for word in ["interview", "interviews", "interviewing"]):
-        return "Interview preparation is key to success! Here are essential tips:\n\n• Research the company and role thoroughly\n• Practice common interview questions\n• Prepare specific examples using the STAR method\n• Dress appropriately and arrive early\n• Prepare thoughtful questions to ask the interviewer\n• Follow up with a thank-you email\n\nWould you like help with any specific type of interview questions?"
+    # General greeting
+    elif any(word in message_lower for word in ['hello', 'hi', 'hey', 'good morning', 'good afternoon']):
+        return "Hello! Welcome to CareerCompass. I'm here to help with career guidance, job search tips, skill development, and resume advice. What would you like to know?"
     
-    elif any(word in message for word in ["salary", "negotiate", "compensation", "pay"]):
-        return "Salary negotiation is an important skill! Here's how to approach it:\n\n1. Research market rates for your role and location\n2. Consider your total compensation package\n3. Wait for the right moment (usually after a job offer)\n4. Present your case with data and achievements\n5. Be prepared to discuss non-salary benefits\n\nRemember, negotiation is often expected and shows your value!"
-    
-    elif any(word in message for word in ["networking", "network", "connections"]):
-        return "Networking is one of the most effective ways to advance your career! Try these strategies:\n\n• Attend industry events and conferences\n• Join professional associations\n• Use LinkedIn to connect with colleagues\n• Offer help and value to others first\n• Follow up and maintain relationships\n• Consider informational interviews\n\nBuilding genuine relationships is key to successful networking."
-    
-    elif any(word in message for word in ["thank", "thanks", "appreciate"]):
-        return "You're very welcome! I'm here to help you succeed in your career journey. Feel free to ask me anything about career development, job searching, or professional growth anytime!"
-    
+    # Default response
     else:
-        return "I'm here to help with your career development! I can assist with:\n\n• Career guidance and planning\n• Job search strategies\n• Resume and cover letter advice\n• Interview preparation\n• Skill development recommendations\n• Networking tips\n• Salary negotiation\n\nWhat specific area would you like to explore?"
+        return "I'm here to help with career guidance, job search tips, skill development, and resume advice. What would you like to know?"
 
 class ChatbotView(APIView):
     permission_classes = [IsAuthenticated]

@@ -51,7 +51,7 @@ export default function Jobs() {
   const { data: jobs = [], isLoading, isError, refetch } = useQuery<Job[]>({
     queryKey: ['jobs', searchTerm, searchLocation],
     queryFn: fetchJobs as any, // Type assertion to handle the query function return type
-    enabled: false, // Disable automatic fetching
+    enabled: !!searchTerm, // Enable when searchTerm exists
     retry: 1,
   });
 
@@ -63,7 +63,6 @@ export default function Jobs() {
     }
     setSearchTerm(jobTitle);
     setSearchLocation(location);
-    refetch();
   };
 
   return (
@@ -135,9 +134,9 @@ export default function Jobs() {
             {/* Animated Gradient Border */}
             <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
             
-            <form onSubmit={searchJobs} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-                <div className="md:col-span-5">
+            <form onSubmit={searchJobs} className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                <div className="lg:col-span-5">
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Briefcase className="h-5 w-5 text-cyan-400 group-hover:scale-110 transition-transform" />
@@ -146,14 +145,15 @@ export default function Jobs() {
                       id="job-title"
                       type="text"
                       placeholder="Job title, skills, or company"
-                      className="pl-12 h-14 bg-slate-700/50 border-slate-600/50 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/30 text-base transition-all duration-300 hover:bg-slate-700/70"
+                      className="pl-12 h-12 sm:h-14 bg-slate-700/50 border-slate-600/50 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/30 text-sm sm:text-base transition-all duration-300 hover:bg-slate-700/70"
                       value={jobTitle}
                       onChange={(e) => setJobTitle(e.target.value)}
+                      required
                     />
                   </div>
                 </div>
                 
-                <div className="md:col-span-5">
+                <div className="lg:col-span-5">
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <MapPin className="h-5 w-5 text-purple-400 group-hover:scale-110 transition-transform" />
@@ -162,25 +162,30 @@ export default function Jobs() {
                       id="location"
                       type="text"
                       placeholder="Location (city, state, or remote)"
-                      className="pl-12 h-14 bg-slate-700/50 border-slate-600/50 text-white placeholder-slate-400 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/30 text-base transition-all duration-300 hover:bg-slate-700/70"
+                      className="pl-12 h-12 sm:h-14 bg-slate-700/50 border-slate-600/50 text-white placeholder-slate-400 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/30 text-sm sm:text-base transition-all duration-300 hover:bg-slate-700/70"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                     />
                   </div>
                 </div>
                 
-                <div className="md:col-span-2">
+                <div className="lg:col-span-2">
                   <Button 
                     type="submit" 
-                    className="h-14 w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white text-base font-medium transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 flex items-center justify-center group"
-                    disabled={isLoading}
+                    className="h-12 sm:h-14 w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white text-sm sm:text-base font-medium transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isLoading || !jobTitle.trim()}
                   >
                     {isLoading ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <>
+                        <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin mr-2" />
+                        <span className="hidden sm:inline">Searching...</span>
+                        <span className="sm:hidden">...</span>
+                      </>
                     ) : (
                       <>
-                        <Search className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-                        <span>Find Jobs</span>
+                        <Search className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:scale-110 transition-transform" />
+                        <span className="hidden sm:inline">Find Jobs</span>
+                        <span className="sm:hidden">Search</span>
                       </>
                     )}
                   </Button>
@@ -201,7 +206,8 @@ export default function Jobs() {
                   type="button" 
                   onClick={() => {
                     setJobTitle('Software Engineer');
-                    document.getElementById('job-title')?.focus();
+                    setSearchTerm('Software Engineer');
+                    setSearchLocation(location);
                   }}
                   className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-all duration-200 flex items-center group"
                 >
@@ -212,7 +218,8 @@ export default function Jobs() {
                   type="button" 
                   onClick={() => {
                     setJobTitle('Product Manager');
-                    document.getElementById('job-title')?.focus();
+                    setSearchTerm('Product Manager');
+                    setSearchLocation(location);
                   }}
                   className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-all duration-200 flex items-center group"
                 >
@@ -223,7 +230,8 @@ export default function Jobs() {
                   type="button" 
                   onClick={() => {
                     setJobTitle('UX Designer');
-                    document.getElementById('job-title')?.focus();
+                    setSearchTerm('UX Designer');
+                    setSearchLocation(location);
                   }}
                   className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-all duration-200 flex items-center group"
                 >
@@ -234,7 +242,8 @@ export default function Jobs() {
                   type="button" 
                   onClick={() => {
                     setJobTitle('Data Scientist');
-                    document.getElementById('job-title')?.focus();
+                    setSearchTerm('Data Scientist');
+                    setSearchLocation(location);
                   }}
                   className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-all duration-200 flex items-center group"
                 >
@@ -253,7 +262,7 @@ export default function Jobs() {
                 <div className="w-full max-w-4xl px-4">
                   <h2 className="text-2xl md:text-3xl font-bold text-white text-center">
                     {isLoading ? (
-                      <div className="flex items-center">
+                      <div className="flex items-center justify-center">
                         <Loader2 className="h-6 w-6 mr-3 animate-spin text-cyan-400" />
                         <span>Searching for jobs...</span>
                       </div>
@@ -277,27 +286,19 @@ export default function Jobs() {
                     )}
                   </h2>
                 </div>
-                {jobs.length > 0 && (
-                  <Button 
-                    variant="outline" 
-                    className="text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/10 hover:border-cyan-400/50 transition-colors duration-300 group"
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                  >
-                    <ArrowUp className="h-4 w-4 mr-2 group-hover:-translate-y-0.5 transition-transform" />
-                    Back to Top
-                  </Button>
-                )}
               </div>
               
               <div className="space-y-5">
                 {isLoading ? (
                   <div className="flex flex-col items-center justify-center py-20 bg-slate-800/30 rounded-2xl backdrop-blur-sm border border-slate-700/50">
-                    <div className="relative">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-r from-cyan-500/10 to-purple-500/10 animate-pulse"></div>
-                      <Loader2 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8 animate-spin text-cyan-400" />
+                    <div className="relative mb-6">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-r from-cyan-500/20 to-purple-500/20 animate-pulse"></div>
+                      <Loader2 className="absolute inset-0 m-auto h-10 w-10 animate-spin text-cyan-400" />
                     </div>
-                    <p className="mt-4 text-lg text-slate-300">Finding the best opportunities for you...</p>
-                    <p className="text-sm text-slate-500 mt-2">This may take a moment</p>
+                    <div className="text-center">
+                      <p className="text-lg text-slate-300 font-medium mb-2">Finding the best opportunities for you...</p>
+                      <p className="text-sm text-slate-500">This may take a moment</p>
+                    </div>
                   </div>
                 ) : isError ? (
                   <div className="text-center py-16 bg-slate-800/30 rounded-2xl backdrop-blur-sm border border-red-500/20">
@@ -311,7 +312,10 @@ export default function Jobs() {
                     <Button 
                       variant="outline" 
                       className="bg-slate-700/50 border-slate-600 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400/50 transition-colors duration-300 group"
-                      onClick={() => refetch()}
+                      onClick={() => {
+                        setSearchTerm(jobTitle);
+                        setSearchLocation(location);
+                      }}
                     >
                       <RefreshCw className="h-4 w-4 mr-2 group-hover:rotate-180 transition-transform duration-500" />
                       Try Again
@@ -327,7 +331,7 @@ export default function Jobs() {
                         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         <div className="relative p-6">
                           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-5">
-                            <div>
+                            <div className="flex-1">
                               <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors duration-300">
                                 {job.job_title}
                               </h3>
@@ -335,9 +339,11 @@ export default function Jobs() {
                                 {job.employer_name}
                               </p>
                             </div>
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/30">
-                              {job.job_employment_type || 'Full-time'}
-                            </span>
+                            <div className="flex-shrink-0">
+                              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/30 whitespace-nowrap">
+                                {job.job_employment_type || 'Full-time'}
+                              </span>
+                            </div>
                           </div>
                           
                           <div className="flex flex-wrap gap-2 mb-5">
@@ -396,25 +402,20 @@ export default function Jobs() {
                     </div>
                     <h3 className="text-xl font-medium text-white mb-2">No jobs found</h3>
                     <p className="text-slate-300 max-w-md mx-auto mb-6">We couldn't find any jobs matching "{searchTerm}" {searchLocation && `in ${searchLocation}`}. Try different keywords or location.</p>
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <div className="flex justify-center">
                       <Button 
                         variant="outline" 
                         className="bg-slate-700/50 border-slate-600 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400/50 transition-colors duration-300"
                         onClick={() => {
                           setJobTitle('');
                           setLocation('');
+                          setSearchTerm('');
+                          setSearchLocation('');
                           document.getElementById('job-title')?.focus();
                         }}
                       >
                         <Search className="h-4 w-4 mr-2" />
                         New Search
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        className="text-slate-300 hover:bg-slate-700/50"
-                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                      >
-                        Back to Top
                       </Button>
                     </div>
                   </div>
