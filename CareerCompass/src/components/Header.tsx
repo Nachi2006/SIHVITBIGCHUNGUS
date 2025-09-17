@@ -31,7 +31,7 @@ const Header = () => {
                 Test/Results
               </Button>
             </Link>
-            <Link to="#" className="group">
+            <Link to="/jobs" className="group">
               <Button variant="nav" className="group-hover:bg-white/5">
                 <Briefcase className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
                 Jobs

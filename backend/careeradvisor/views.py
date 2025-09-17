@@ -2,11 +2,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status, request, generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import UserSerializer, ChatSerializer
-from rest_framework import generics
-from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
@@ -18,7 +16,8 @@ from django.shortcuts import render
 from django.views import View
 import requests
 from .models import Chat
-
+from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.csrf import csrf_exempt
 
 #jwt authorization
 class Home(APIView):
@@ -107,5 +106,52 @@ class ChatHistoryView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        return Chat.objects.filter(user=user).order_by('created_at')
+        return Chat.objects.filter(user=self.request.user).order_by('-created_at')
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@csrf_exempt
+def job_search(request):
+    job_title = request.data.get('job_title', '').strip()
+    location = request.data.get('location', 'India').strip()
+    
+    if not job_title:
+        return Response({'error': 'Job title is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # API endpoint
+    url = "https://jsearch.p.rapidapi.com/search"
+    
+    # Parameters for job search
+    querystring = {
+        "query": f"{job_title} jobs in {location}",
+        "page": "1",
+        "num_pages": "1",
+        "country": "in",
+        "date_posted": "all"
+    }
+    
+    # Headers with your RapidAPI key
+    headers = {
+        "x-rapidapi-host": "jsearch.p.rapidapi.com",
+        "x-rapidapi-key": "0735b4faabmsh42bad049d1ef39dp147b1cjsn55d5602fbba7"
+    }
+    
+    try:
+        # Make request to JSearch API
+        response = requests.get(url, headers=headers, params=querystring)
+        response.raise_for_status()
+        data = response.json()
+        
+        # Extract and format job data
+        jobs = data.get("data", [])
+        return Response({
+            'status': 'success',
+            'count': len(jobs),
+            'data': jobs
+        })
+        
+    except requests.exceptions.RequestException as e:
+        return Response({
+            'status': 'error',
+            'message': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
