@@ -299,9 +299,11 @@ const Index = () => {
 
             <Card className="group hover:shadow-vibrant transition-all duration-500 hover:-translate-y-3 hover:scale-105 border-0 shadow-sm hover:-rotate-1">
               <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-gradient-forest rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-500 group-hover:animate-pulse-glow">
-                  <GraduationCap className="w-8 h-8 text-white" />
-                </div>
+                <Link to="/colleges" className="block w-12 h-12 mx-auto mb-4 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-500 group-hover:animate-pulse-glow">
+                  <div className="w-full h-full bg-gradient-forest rounded-lg flex items-center justify-center">
+                    <GraduationCap className="w-8 h-8 text-white" />
+                  </div>
+                </Link>
                 <h3 className="text-xl font-semibold mb-2 text-white group-hover:text-green-400 transition-colors">College Guidance</h3>
                 <p className="text-gray-300 group-hover:text-white transition-colors">
                   Find the perfect educational path with our college recommendation system

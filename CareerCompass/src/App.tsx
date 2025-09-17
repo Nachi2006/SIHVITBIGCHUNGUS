@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Chat from "./pages/Chat";
 import Jobs from "./pages/Jobs";
+import Colleges from "./pages/Colleges";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,14 +34,8 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
-            <Route 
-              path="/jobs" 
-              element={
-                <ProtectedRoute>
-                  <Jobs />
-                </ProtectedRoute>
-              } 
-            />
+            <Route path="/jobs" element={<Jobs />} />
+            <Route path="/colleges" element={<Colleges />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

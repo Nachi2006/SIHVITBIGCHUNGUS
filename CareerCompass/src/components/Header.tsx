@@ -44,7 +44,7 @@ const Header = () => {
                 Jobs
               </Button>
             </Link>
-            <Link to="#" className="group">
+            <Link to="/colleges" className="group">
               <Button variant="nav" className="group-hover:bg-white/5">
                 <GraduationCap className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
                 Colleges
