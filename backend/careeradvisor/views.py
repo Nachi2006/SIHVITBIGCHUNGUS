@@ -1,19 +1,13 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status, request, generics
+from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer, ChatSerializer
 from django.contrib.auth.models import User
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from dj_rest_auth.registration.views import SocialLoginView
-from django.conf import settings
-from urllib.parse import urljoin
-from django.urls import reverse
-from django.shortcuts import render
-from django.views import View
+from django.contrib.auth import authenticate
 import requests
 from .models import Chat
 from rest_framework.decorators import api_view, permission_classes
@@ -33,35 +27,39 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = UserSerializer
 
-#google authentication
-class GoogleLogin(SocialLoginView):
-    adapter_class = GoogleOAuth2Adapter
-    callback_url = settings.GOOGLE_OAUTH_CALLBACK_URL
-    client_class = OAuth2Client
-class GoogleLoginCallback(APIView):
-    authentication_classes = []
+class CustomLoginView(APIView):
     permission_classes = [AllowAny]
-    def get(self, request, *args, **kwargs):
+    
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        
+        if not username or not password:
+            return Response({
+                'error': 'Username and password are required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = authenticate(username=username, password=password)
+        
+        if user:
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                }
+            })
+        else:
+            return Response({
+                'error': 'Invalid credentials'
+            }, status=status.HTTP_401_UNAUTHORIZED)
 
-        code = request.GET.get("code")
-
-        if code is None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        token_endpoint_url = urljoin("http://localhost:8000", reverse("google_login"))
-        response = requests.post(url=token_endpoint_url, data={"code": code})
-
-        return Response(response.json(), status=status.HTTP_200_OK)
-class LoginPage(View):
-    def get(self, request, *args, **kwargs):
-        return render(
-            request,
-            "login.html",
-            {
-                "google_callback_uri": settings.GOOGLE_OAUTH_CALLBACK_URL,
-                "google_client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
-            },
-        )
-#https://accounts.google.com/o/oauth2/v2/auth?redirect_uri={{ google_callback_uri }}&prompt=consent&response_type=code&client_id={{ google_client_id }}&scope=openid%20email%20profile&access_type=offline
+# Removed Google authentication
 
 #views.py
 @api_view(['GET'])  
@@ -71,14 +69,40 @@ def home(request):
 
 def get_chatbot_response(message):
     """
-    A placeholder function to simulate a chatbot's response.
+    Enhanced chatbot response function with career-focused responses.
     Replace this with your actual ML model's prediction logic.
     """
     message = message.lower()
-    if "hello" in message:
-        return "Hello there! How can I help you today?"
+    
+    if any(word in message for word in ["hello", "hi", "hey", "greetings"]):
+        return "Hello! I'm your CareerCompass AI assistant. I'm here to help you with career guidance, job search tips, skill development, and resume advice. What would you like to know?"
+    
+    elif any(word in message for word in ["career", "guidance", "advice", "path"]):
+        return "I'd be happy to help with career guidance! To provide the best advice, could you tell me more about your current situation? Are you a student looking to choose a career path, someone considering a career change, or looking to advance in your current field?"
+    
+    elif any(word in message for word in ["job", "search", "finding", "employment"]):
+        return "Great! Job searching can be challenging, but I'm here to help. Here are some key tips:\n\n1. Tailor your resume for each application\n2. Use job boards like LinkedIn, Indeed, and company websites\n3. Network with professionals in your field\n4. Prepare for interviews by researching companies\n5. Follow up after applications\n\nWhat specific aspect of job searching would you like to focus on?"
+    
+    elif any(word in message for word in ["resume", "cv", "curriculum"]):
+        return "I can definitely help with resume advice! A strong resume should:\n\n• Have a clear, professional format\n• Include relevant keywords from job descriptions\n• Highlight your achievements with specific metrics\n• Be tailored to each position\n• Include a compelling summary statement\n\nWould you like specific advice for any particular section of your resume?"
+    
+    elif any(word in message for word in ["skill", "skills", "development", "learning"]):
+        return "Skill development is crucial for career growth! Here's how to approach it:\n\n1. Identify in-demand skills in your field\n2. Take online courses (Coursera, Udemy, LinkedIn Learning)\n3. Practice through projects and volunteering\n4. Seek mentorship and feedback\n5. Stay updated with industry trends\n\nWhat specific skills are you looking to develop?"
+    
+    elif any(word in message for word in ["interview", "interviews", "interviewing"]):
+        return "Interview preparation is key to success! Here are essential tips:\n\n• Research the company and role thoroughly\n• Practice common interview questions\n• Prepare specific examples using the STAR method\n• Dress appropriately and arrive early\n• Prepare thoughtful questions to ask the interviewer\n• Follow up with a thank-you email\n\nWould you like help with any specific type of interview questions?"
+    
+    elif any(word in message for word in ["salary", "negotiate", "compensation", "pay"]):
+        return "Salary negotiation is an important skill! Here's how to approach it:\n\n1. Research market rates for your role and location\n2. Consider your total compensation package\n3. Wait for the right moment (usually after a job offer)\n4. Present your case with data and achievements\n5. Be prepared to discuss non-salary benefits\n\nRemember, negotiation is often expected and shows your value!"
+    
+    elif any(word in message for word in ["networking", "network", "connections"]):
+        return "Networking is one of the most effective ways to advance your career! Try these strategies:\n\n• Attend industry events and conferences\n• Join professional associations\n• Use LinkedIn to connect with colleagues\n• Offer help and value to others first\n• Follow up and maintain relationships\n• Consider informational interviews\n\nBuilding genuine relationships is key to successful networking."
+    
+    elif any(word in message for word in ["thank", "thanks", "appreciate"]):
+        return "You're very welcome! I'm here to help you succeed in your career journey. Feel free to ask me anything about career development, job searching, or professional growth anytime!"
+    
     else:
-        return "Ask me a question"
+        return "I'm here to help with your career development! I can assist with:\n\n• Career guidance and planning\n• Job search strategies\n• Resume and cover letter advice\n• Interview preparation\n• Skill development recommendations\n• Networking tips\n• Salary negotiation\n\nWhat specific area would you like to explore?"
 
 class ChatbotView(APIView):
     permission_classes = [IsAuthenticated]

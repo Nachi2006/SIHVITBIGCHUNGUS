@@ -2,6 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bot, User, ArrowUp, Loader2, ArrowLeft, MessageSquare, RefreshCw, Plus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { chatAPI } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 // Animation variants
 const containerVariants = {
@@ -195,32 +198,49 @@ const Chat = () => {
       timestamp: new Date(),
     };
 
+    const currentInput = input;
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Call the backend API
+      const response = await chatAPI.sendMessage(currentInput);
+      
       const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        content: `I received your message: "${input}". This is a simulated response.`,
+        id: response.id?.toString() || (Date.now() + 1).toString(),
+        content: response.response || 'Sorry, I encountered an error processing your request.',
         isUser: false,
-        timestamp: new Date(),
+        timestamp: new Date(response.created_at || new Date()),
       };
+      
       setMessages((prev) => [...prev, aiResponse]);
-      setIsLoading(false);
 
       // Update session title if it's the first message
       if (messages.length === 1) {
         setSessions(prevSessions => 
           prevSessions.map(session => 
             session.isActive 
-              ? { ...session, title: input.slice(0, 30) + (input.length > 30 ? '...' : '') }
+              ? { ...session, title: currentInput.slice(0, 30) + (currentInput.length > 30 ? '...' : '') }
               : session
           )
         );
       }
-    }, 1000);
+    } catch (error: any) {
+      console.error('Chat API error:', error);
+      
+      const errorResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        content: 'Sorry, I\'m having trouble connecting right now. Please try again later.',
+        isUser: false,
+        timestamp: new Date(),
+      };
+      
+      setMessages((prev) => [...prev, errorResponse]);
+      toast.error('Failed to send message. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Quick action suggestions
