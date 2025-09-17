@@ -1,10 +1,10 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status, request
+from rest_framework import status, request, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ChatSerializer
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
@@ -17,6 +17,8 @@ from django.urls import reverse
 from django.shortcuts import render
 from django.views import View
 import requests
+from .models import Chat
+
 
 #jwt authorization
 class Home(APIView):
@@ -68,3 +70,42 @@ def home(request):
     data = {'message': 'Welcome to the home page!'}
     return Response(data)
 
+def get_chatbot_response(message):
+    """
+    A placeholder function to simulate a chatbot's response.
+    Replace this with your actual ML model's prediction logic.
+    """
+    message = message.lower()
+    if "hello" in message:
+        return "Hello there! How can I help you today?"
+    else:
+        return "Ask me a question"
+
+class ChatbotView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user_message = request.data.get('message')
+
+        if not user_message:
+            return Response({'error': 'Message field is required.'}, status=400)
+
+        bot_response = get_chatbot_response(user_message)
+
+        chat = Chat.objects.create(
+            user=request.user,
+            message=user_message,
+            response=bot_response
+        )
+
+        serializer = ChatSerializer(chat)
+
+        return Response(serializer.data)
+    
+class ChatHistoryView(generics.ListAPIView):
+    serializer_class = ChatSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Chat.objects.filter(user=user).order_by('created_at')

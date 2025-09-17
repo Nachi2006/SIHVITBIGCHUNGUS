@@ -1,5 +1,5 @@
 from django.urls import path, include, re_path
-from .views import Home, RegisterView, GoogleLoginCallback, GoogleLogin, LoginPage
+from .views import Home, RegisterView, GoogleLoginCallback, GoogleLogin, LoginPage, ChatbotView, ChatHistoryView
 
 urlpatterns=[
     path('', Home.as_view(),name='home'),
@@ -14,4 +14,6 @@ urlpatterns=[
         GoogleLoginCallback.as_view(),
         name="google_login_callback",
     ),
+    path('chat', ChatbotView.as_view(), name='chatbot'),
+    path('chat/history', ChatHistoryView.as_view(), name='chat-history')
 ]
