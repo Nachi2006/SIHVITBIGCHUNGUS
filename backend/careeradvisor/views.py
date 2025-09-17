@@ -81,7 +81,7 @@ def get_chatbot_response(message):
     """
     try:
         # Configure Gemini API
-        api_key = "AIzaSyAlI8aebOEHNW7fe-yFTQcfp_jDfD3RKBk"
+        #<gemini api key>
         if not api_key:
             print("❌ No GEMINI_API_KEY found in environment variables")
             return get_fallback_response(message)
@@ -239,7 +239,7 @@ def college_search(request):
 
     try:
         # Configure Gemini API
-        api_key = "AIzaSyAlI8aebOEHNW7fe-yFTQcfp_jDfD3RKBk"
+        #<rapid api key>
         if not api_key:
             return Response({'error': 'Gemini API key not configured'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
